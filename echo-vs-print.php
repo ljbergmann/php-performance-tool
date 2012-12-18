@@ -22,4 +22,10 @@ $time1 = $endP - $startP;
 
 $b = ($time2 / $time1) * 100;
 echo "<br>Echo is $b % faster";
+/*
+* 3. Je nach dem wie die PHP-Einstellungen bzw. der Server Hardwaretechnisch ausgestattet ist sind die Werte variabel.
+* 4. Echo ist zwischen 80% und 90% schneller als print. Je nach dem ob ob_start() gesetzt ist oder nicht kann der Wert auch größer als 100% sein
+* 5. In Kombination mit ob_start() ist echo tatsächlich schneller als print daraus folgt das mann am besten echo() verwenden sollte wenn man viele Strings bzw. lange Strings ausgeben möchte.
+*/
 ?>
+
