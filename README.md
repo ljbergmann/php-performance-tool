@@ -1,7 +1,8 @@
-php-performance
+PHP-Performance-Tool
 ===============
 
-PHP-Performence Tips mit Codebeispielen
+Dieses Tool dient der Visualisierung von Messwerten bzw. anderen Daten.
 
-Quelle:
-http://www.chazzuka.com/63-best-practice-to-optimize-php-code-performances-58/
+Es wird unter der Creative Commons Lizenz 3.0 CC-BY-SA siehe LICENSE(LICENSE.md) veröffentlicht.
+
+Der Source-Code ist Public Domain.
