@@ -108,10 +108,19 @@ class dataMD
 	
 	private function getAverage($tmp)
 	{
-		foreach($tmp as $element)
+		$result = array();
+		$local	= (int)0;
+		foreach($tmp as $key=>$element)
 		{
-			
+			foreach($element as $a)
+			{
+				$local  += $a;
+			}
+			$local = ($local / $this->count);
+			$result[$key][] = $local;
 		}
+		
+		return $result;
 	}
 	
 	/**
