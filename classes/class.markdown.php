@@ -77,8 +77,9 @@ class markdown
 	 */
 	public function __construct($data,$title = null,$description = null)
 	{
-		$this->data		= $data;
-		$this->title	= $title;
+		$this->data			= $data;
+		$this->title		= $title;
+		$this->description	= $description;
 	}
 	
 
@@ -98,7 +99,7 @@ class markdown
 		
 		$fileContent	= implode("\n", $fileContent);
 		
-		chdir(dirname(__FILE__));
+		chdir(dirname(dirname(dirname(__FILE__))));
 		file_put_contents(self::filename, $fileContent);
 	}
 	
@@ -213,6 +214,7 @@ class markdown
 		$this->max		= $this->getMinMax($sortedArray,true);
 		$this->min		= $this->getMinMax($sortedArray);
 		$this->average	= $this->getAverage($sortedArray);
+		$this->relativeDifference();
 	
 	}
 	
@@ -257,20 +259,28 @@ class markdown
 	private function getAverage($tmp)
 	{
 		$result = array();
-		$local	= (int)0;
+		$local	= (double)0;
 		foreach($tmp as $key=>$element)
 		{
 			foreach($element as $a)
 			{
 				$local  += $a;
 			}
-			$local = ($local / $this->count);
-			$result[$key] = $local;
+			$local			= ($local / $this->count);
+			$result[$key]	= $local;
 		}
 		
 		return $result;
 	}
 	
+	private function relativeDifference()
+	{
+		$keys	= array_keys($this->average);
+		$first	= $this->average[$keys[0]];
+		$second	= $this->average[$keys[1]];
+		
+		$this->average['Relativer Unterschied']	= (( $second/ $first) - 1) * 100;
+	}
 		
 	/**
 	 * getMinMax function.
