@@ -68,6 +68,15 @@ class Markdown
 	private $description; 
 
 	/**
+	 * groups
+	 * 
+	 * (default value: false)
+	 * 
+	 * @var bool
+	 * @access private
+	 */
+	private $groups = false;
+	/**
 	 * __construct function.
 	 * 
 	 * @access public
@@ -109,7 +118,12 @@ class Markdown
 	{
 		$this->description = strval($description);
 	}
-
+	
+	public function setStatisticsMethod(bool $method)
+	{
+		$this->statisticsMethod = $method;
+	}
+	
 	/**
 	 * write function.
 	 * writing the data into the file
@@ -262,8 +276,11 @@ class Markdown
 		$this->max		= $this->getMinMax($sortedArray,true);
 		$this->min		= $this->getMinMax($sortedArray);
 		$this->average	= $this->getAverage($sortedArray);
-		$this->relative	= $this->relativeDifferenceOnEvenData();
-	
+		
+		if($this->groups)
+			$this->relative	= $this->relativeDifferenceGroup();
+		else
+			$this->relative = $this->relativeDifference();
 	}
 	
 	/**
@@ -363,27 +380,50 @@ class Markdown
 	
 	/**
 	 * relativeDifferenceOnEvenData function.
-	 * Returns an array the the relative difference in percent.
+	 * Divides the given datan into arrays with 2 values and calulate the relative difference between both.
 	 * @access private
 	 * @return array
 	 */
-	private function relativeDifferenceOnEvenData()
+	private function relativeDifferenceGroup()
 	{
 		if(count($this->average) % 2 != 0)
 		{
-			throw new Exception("Not enough data to compare all data fields.");
+			return array('Error'=>"The given data not contains enough data to build groups with equal pieces.");
 		}
 		$group		= array_chunk($this->average,2,true);
 		$result		= array();
 		foreach($group as $element)
 		{
 			$keys	= array_keys($element);
-			$result[$keys[0]." / ".$keys[1]] = (($element[$keys[0]] / $element[$keys[1]]) -1) * 100;
+			$first	= $element[$keys[0]];
+			$second	= $element[$keys[1]];
+			$result[$keys[0]." / ".$keys[1]] = ((($first-$second)/$first)*100);
 			unset($keys);
 		}
 		unset($group);
 		return  $result;
 		
+	}
+	
+	private function relativeDifference()
+	{
+		$counter = count($this->average) - 1;
+		$tmp 	 = $this->average;
+		$keys	 = array_keys($tmp);
+		for($i=0;$i < $counter;$i++)
+		{
+			if($i < $counter)
+				$b = $i + 1;
+			else
+				break;
+			$first	= $tmp[$keys[$i]];
+			$second = $tmp[$keys[$b]];
+			
+			$result[$keys[$i]." / ".$keys[$b]] = (double) ((($first - $second)/$first) *100);
+			unset($first,$second);
+		}
+		unset($keys,$tmp,$counter);
+		return $result;
 	}
 	
 	/**
