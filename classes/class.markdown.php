@@ -405,9 +405,20 @@ class Markdown
 		
 	}
 	
+	/**
+	 * relativeDifference function.
+	 * Return an array with the relative Difference between the given data rows.
+	 * @access private
+	 * @return void
+	 */
 	private function relativeDifference()
 	{
+		
 		$counter = count($this->average) - 1;
+		if($count == 0)
+		{
+			return array("Error"=>"Not enough data to compare them.")
+		}
 		$tmp 	 = $this->average;
 		$keys	 = array_keys($tmp);
 		for($i=0;$i < $counter;$i++)
