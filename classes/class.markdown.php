@@ -1,12 +1,13 @@
 <?php
 /**
-* Autor: Leon Bergmann
+* Autor: Leon Bergmann, saftmeister
 * Datum: 24.12.2012 12:50
-* Update: 25.12.2012 01:34 Uhr 
+* Update: 31.12.2012 01:49 Uhr  
 * License: LICENSE.md
 * markdown class.
 */
-class markdown
+
+class Markdown
 {
 	/**
 	 * filename
@@ -15,7 +16,7 @@ class markdown
 	 * 
 	 * @var string
 	 */
-	const filename = "data.md";
+	private $filename;
 	/**
 	 * average
 	 * 
@@ -75,17 +76,43 @@ class markdown
 	 * @param mixed $description (default: null)
 	 * @return void
 	 */
-	public function __construct($data,$title = null,$description = null)
+	public function __construct($data = null, $title = null, $description = null)
 	{
-		$this->data			= $data;
-		$this->title		= $title;
-		$this->description	= $description;
+		$this->filename = dirname(__FILE__) ." /data.md";
+		$this->data		= $data;
+		$this->title	= $title;
+	}
+
+	/**
+	 * Set the data values
+	 * @param array $data
+	 */
+	public function setData(array $data)
+	{
+		$this->data		= $data;
 	}
 	
+	/**
+	 * Set the title
+	 * @param string $title
+	 */
+	public function setTitle($title)
+	{
+		$this->title = strval($title);
+	}
+	
+	/**
+	 * Set the description
+	 * @param string $description
+	 */
+	public function setDescription($description)
+	{
+		$this->description = strval($description);
+	}
 
 	/**
 	 * write function.
-	 * 
+	 * writing the data into the file
 	 * @access public
 	 * @return void
 	 */
@@ -99,14 +126,31 @@ class markdown
 		
 		$fileContent	= implode("\n", $fileContent);
 		
-		chdir(dirname(dirname(dirname(__FILE__))));
-		file_put_contents(self::filename, $fileContent);
+		file_put_contents($this->filename, $fileContent);
 	}
 	
+	public function setDataDir($dir)
+	{
+		$this->setDataPathAbsolute($dir . '/data.md');
+	}
+	
+	/**
+	 * setDataPathAbsolute function.
+	 * set the data path
+	 * @access public
+	 * @param mixed $path
+	 * @return void
+	 */
+	public function setDataPathAbsolute($path)
+	{
+		if(!is_dir(dirname($path)))
+			throw new Exception("Directory " . dirname($path) . " does not exist!");
+		$this->filename =  $path;
+	}
 	
 	/**
 	 * markdownFileHead function.
-	 * 
+	 * Creating the head of the document.
 	 * @access private
 	 * @return string
 	 */
@@ -136,7 +180,7 @@ class markdown
 
 	/**
 	 * markdownData function.
-	 * 
+	 * Prepare the given data for output
 	 * @access private
 	 * @return string
 	 */
@@ -160,7 +204,7 @@ class markdown
 	}
 	/**
 	 * markdownDataHeader function.
-	 * 
+	 * Creating the header of the document.
 	 * @access private
 	 * @return string
 	 */
@@ -172,7 +216,7 @@ class markdown
 	}
 	/**
 	 * markdownStatistic function.
-	 * 
+	 * Creating the footer of the document. The footer contains the howl statistics stuff.
 	 * @access private
 	 * @return string
 	 */
@@ -183,18 +227,22 @@ class markdown
 		$minKeys	= array_keys($this->min);
 		$maxKeys	= array_keys($this->max);
 		$aveKeys	= array_keys($this->average);
+		$relKeys	= array_keys($this->relative);
 		
 		$minKeys	= implode(" | ", $minKeys);
 		$maxKeys	= implode(" | ", $maxKeys);
 		$aveKeys	= implode(" | ", $aveKeys);
+		$relKeys	= implode(" | ", $relKeys);
 		
 		$minData	= implode(" | ", $this->min);
 		$maxData	= implode(" | ", $this->max);
 		$aveData	= implode(" | ", $this->average);
+		$relData	= implode(" | ", $this->relative);
 		
 		$footer	   .= '### min values'."\n".'#### '.$minKeys."\n".'```'."\n".$minData."\n".'```'."\n";
 		$footer	   .= '### max values'."\n".'#### '.$maxKeys."\n".'```'."\n".$maxData."\n".'```'."\n";
 		$footer	   .= '### average values'."\n".'#### '.$aveKeys."\n".'```'."\n".$aveData."\n".'```'." \n ";
+		$footer	   .= '### relative Difference'."\n".'#### '.$relKeys."\n".'```'."\n".$relData."\n".'```'." \n ";
 		
 		return $footer;	
 	}
@@ -202,7 +250,7 @@ class markdown
 	
 	/**
 	 * statistics function.
-	 * 
+	 * do the statistics stuff
 	 * @access private
 	 * @return void
 	 */
@@ -214,13 +262,13 @@ class markdown
 		$this->max		= $this->getMinMax($sortedArray,true);
 		$this->min		= $this->getMinMax($sortedArray);
 		$this->average	= $this->getAverage($sortedArray);
-		$this->relativeDifference();
+		$this->relative	= $this->relativeDifferenceOnEvenData();
 	
 	}
 	
 	/**
 	 * statisticsArraySort function.
-	 * 
+	 * Return an array with the sorted data inside.
 	 * @access private
 	 * @return array
 	 */
@@ -229,6 +277,9 @@ class markdown
 		$tmp = array();
 		for($i = 0; $i < count($this->data); $i++)
 		{
+			if(!isset($this->data[$i]))
+				throw new Exception("Internal statistics error: Index $i does not exists in data array");
+			
 			foreach($this->data[$i] as $key=>$element)
 			{
 				$tmp[$key][] = $element;
@@ -251,7 +302,7 @@ class markdown
 	
 	/**
 	 * getAverage function.
-	 * 
+	 * Returns the average of the data;
 	 * @access private
 	 * @param mixed $tmp
 	 * @return array
@@ -259,32 +310,28 @@ class markdown
 	private function getAverage($tmp)
 	{
 		$result = array();
-		$local	= (double)0;
+		$local	= (int)0;
 		foreach($tmp as $key=>$element)
 		{
 			foreach($element as $a)
 			{
+				if(!is_numeric($a))
+				{
+					throw new Exception("Value ".(is_array($a) ? "'Array'" : $a)." is not a number!");
+				}
 				$local  += $a;
 			}
-			$local			= ($local / $this->count);
-			$result[$key]	= $local;
+			$local = ($local / $this->count);
+			$result[$key] = $local;
 		}
 		
 		return $result;
 	}
 	
-	private function relativeDifference()
-	{
-		$keys	= array_keys($this->average);
-		$first	= $this->average[$keys[0]];
-		$second	= $this->average[$keys[1]];
-		
-		$this->average['Relativer Unterschied']	= (( $second/ $first) - 1) * 100;
-	}
 		
 	/**
 	 * getMinMax function.
-	 * 
+	 * Returns the min- or maximum value.
 	 * @access private
 	 * @param bool $max (default: false)
 	 * @return array
@@ -296,7 +343,10 @@ class markdown
 		{
 			foreach($tmp as $key=>$local)
 			{
-				 $result[$key] = $local[($this->count - 1)];
+				if(isset($local[($this->count - 1)]))
+					$result[$key] = $local[($this->count - 1)];
+				else
+					throw new Exception(" Index " . $this->count - 1 ." Does not exist in local data array");
 			}
 		}
 		else
@@ -311,5 +361,53 @@ class markdown
 		return $result;
 	}
 	
+	/**
+	 * relativeDifferenceOnEvenData function.
+	 * Returns an array the the relative difference in percent.
+	 * @access private
+	 * @return array
+	 */
+	private function relativeDifferenceOnEvenData()
+	{
+		if(count($this->average) % 2 != 0)
+		{
+			throw new Exception("Not enough data to compare all data fields.");
+		}
+		$group		= array_chunk($this->average,2,true);
+		$result		= array();
+		foreach($group as $element)
+		{
+			$keys	= array_keys($element);
+			$result[$keys[0]." / ".$keys[1]] = (($element[$keys[0]] / $element[$keys[1]]) -1) * 100;
+			unset($keys);
+		}
+		unset($group);
+		return  $result;
+		
+	}
+	
+	/**
+	 * Return the last modification time of data file
+	 * @return integer The timestamp of last modification
+	 */
+	public function lastModified()
+	{
+		if(file_exists($this->filename) && ($stats = stat($this->filename)) != FALSE)
+		{
+			return intval($stats['mtime']);
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
+	public function clean()
+	{
+		if(file_exists($this->filename))
+			return unlink($this->filename);
+		
+		return 1;
+	}
 }
 ?>
