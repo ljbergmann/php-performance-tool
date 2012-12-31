@@ -5,14 +5,17 @@
 * Update:
 * License: LICENSE.md
 */
-class gitHubMarkdownToHTML
+class renderHTML
 {
 	private $content;
+	private $connection:
 	const HOST = "https://api.github.com/markdown";
 	
-	public function __construct($content,$file = null)
+	public function __construct()
 	{
-		
+		$this->connection = curl_init();
+		curl_setopt($this->connection, CURLOPT_URL, $this->HOST);
+		curl_setopt($this->connection, CURLOPT_POST, 1);
 	}
 }
 ?>
