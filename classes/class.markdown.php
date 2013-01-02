@@ -85,11 +85,9 @@ class Markdown
 	 * @param mixed $description (default: null)
 	 * @return void
 	 */
-	public function __construct($data = null, $title = null, $description = null)
+	public function __construct()
 	{
 		$this->filename = dirname(__FILE__) ." /data.md";
-		$this->data		= $data;
-		$this->title	= $title;
 	}
 
 	/**
@@ -119,7 +117,7 @@ class Markdown
 		$this->description = strval($description);
 	}
 	
-	public function setStatisticsMethod(bool $method)
+	public function setStatisticsMethod($method)
 	{
 		$this->statisticsMethod = $method;
 	}
@@ -174,13 +172,13 @@ class Markdown
 		if(!is_null($this->title))
 		{
 			$head	= '---------'."\n";
-			$head  .= '# $this->title';
+			$head  .= '# '.$this->title."\n";
 			$head  .= '---------'."\n";
 		}
 		else
 		{
 			$head	= '---------'."\n";
-			$head  .= '# Data'."\n";
+			$head  .= '# '."Data"."\n";
 			$head  .= '---------'."\n";
 		}
 		if(!is_null($this->description))
@@ -255,8 +253,8 @@ class Markdown
 		
 		$footer	   .= '### min values'."\n".'#### '.$minKeys."\n".'```'."\n".$minData."\n".'```'."\n";
 		$footer	   .= '### max values'."\n".'#### '.$maxKeys."\n".'```'."\n".$maxData."\n".'```'."\n";
-		$footer	   .= '### average values'."\n".'#### '.$aveKeys."\n".'```'."\n".$aveData."\n".'```'." \n ";
-		$footer	   .= '### relative Difference'."\n".'#### '.$relKeys."\n".'```'."\n".$relData."\n".'```'." \n ";
+		$footer	   .= '### average values'."\n".'#### '.$aveKeys."\n".'```'."\n".$aveData."\n".'```'." \n";
+		$footer	   .= '### relative Difference'."\n".'#### '.$relKeys."\n".'```'."\n".$relData."\n".'```'." \n";
 		
 		return $footer;	
 	}
@@ -415,9 +413,9 @@ class Markdown
 	{
 		
 		$counter = count($this->average) - 1;
-		if($count == 0)
+		if($counter == 0)
 		{
-			return array("Error"=>"Not enough data to compare them.")
+			return array("Error"=>"Not enough data to compare them.");
 		}
 		$tmp 	 = $this->average;
 		$keys	 = array_keys($tmp);
