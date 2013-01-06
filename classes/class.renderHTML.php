@@ -8,7 +8,7 @@
 class renderHTML
 {
 	private $content;
-	private $connection:
+	private $connection;
 	const HOST = "https://api.github.com/markdown";
 	
 	public function __construct()
