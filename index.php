@@ -4,10 +4,16 @@ require_once("classes/class.markdown.php");
 require_once("classes/class.renderHTML.php");
 require_once("classes/class.statistics.php");
 echo "<pre>";
-$data[0]['Test']	= "2.14576721191E-6";
-$data[0]['Singel']	= "5.00679016113E-6";
-$data[1]['Test']	= "9.53674316406E-7"; 
-$data[1]['Singel']	= "2.14576721191E-6";
+
+$data[0]['Factory']		= "1";
+$data[0]['Singelton']	= "2";
+$data[0]['Database']	= "3"; 
+$data[0]['Non']			= "4";
+
+$data[1]['Factory']		= "4";
+$data[1]['Singelton']	= "3";
+$data[1]['Database']	= "2"; 
+$data[1]['Non']			= "1";
 try
 {
 	$Controller = new Controller;
@@ -26,5 +32,9 @@ catch(Exception $e)
 }
 
 
-print_r($Controller)
+print_r($Controller);
+
+echo file_size(memory_get_usage());
+echo "<br>";
+echo file_size(memory_get_peak_usage());
 ?>

@@ -3,26 +3,26 @@
 ---------
 I am testing my Controller
 
-## Anzahl | Test | Singel
+## Anzahl | Factory | Singelton | Database | Non
 
 ```
-1 | 0.0000021458 | 0.0000050068
-2 | 0.0000009537 | 0.0000021458
+1 | 1.0000000000 | 2.0000000000 | 3.0000000000 | 4.0000000000
+2 | 4.0000000000 | 3.0000000000 | 2.0000000000 | 1.0000000000
 ```
 
 ## Statistik
 ### min values
-#### Test | Singel
+#### Factory | Singelton | Database | Non
 ```
-0.0000009537 | 0.0000021458
+1.0000000000 | 2.0000000000 | 2.0000000000 | 1.0000000000
 ```
 ### max values
-#### Test | Singel
+#### Factory | Singelton | Database | Non
 ```
-0.0000021458 | 0.0000050068
+4.0000000000 | 3.0000000000 | 3.0000000000 | 4.0000000000
 ```
 ### average values
-#### Test | Singel
+#### Factory | Singelton | Database | Non
 ```
-0.0000015497 | 0.0000035763
+2.5000000000 | 2.5000000000 | 2.5000000000 | 2.5000000000
 ``` 
